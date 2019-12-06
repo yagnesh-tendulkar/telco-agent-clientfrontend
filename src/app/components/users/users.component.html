@@ -1,0 +1,571 @@
+<!-- <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgb(12, 12, 12); color: rgb(255, 255, 255);">
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+
+    <span class="page-title">Agent Escalation Portal</span>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item active">
+      </li>
+    </ul>
+
+    <span class="user-info" *ngIf="true">
+      <span style="border-right: 2px solid rgba(247, 244, 244, 0.945); padding-right: 1rem">Hello!
+        <strong>{{user}}</strong></span>
+      <span (click)="logout()" style="padding-left: 1rem; cursor:pointer"><span class="fa fa-fw fa-sign-out"></span>
+        Sign-Out</span>
+    </span>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-9 inbox_msg">
+      <div class="inbox_people">
+        <div class="headind_srch">
+          <div class="recent_heading">
+            <h4>Request List</h4>
+          </div>
+          <div class="srch_bar">
+            <div class="stylish-input-group">
+              <input type="text" class="search-bar" [(ngModel)]="searchitem" name="searchitem" placeholder="Search">
+              <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+              </span> </div>
+          </div>
+        </div>
+        <div class="inbox_chat">
+          <div class="font-italic text-muted no-user-select d-flex justify-content-lg-center" *ngIf="list.length==0">No
+            requests</div>
+          <div *ngFor="let user of list  | filter:searchitem ;let i = index" class="chat_list"
+            >            
+            <div *ngIf="user.status=='Requested' " class="chat_people active_chat">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt=""> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}</h5>
+                <span class="text-success text-sm-left font-italic">new telcobot request!!</span><button
+                  class="btn float-right btn-outline-info" type="button" (click)="chatactive(user.id,i)">Accept</button>
+              </div>
+            </div>
+            <div *ngIf="user.status=='Accepted'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}
+                  <!-- <span class="chat_date">{{user.message[user.message.length-1].date | date: 'short'}}</span> -->
+                <!-- </h5>
+                <p>{{user.status}}</p>
+              </div>
+            </div>
+            <div *ngIf="user.status=='Ended'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}
+                   <span class="chat_date">{{user.message[user.message.length-1].date | date: 'short'}}</span> 
+                </h5>
+                <p>{{user.status}}</p>
+              </div>
+            </div>
+            <div *ngIf="user.status=='dummy'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}</h5>
+                <p>Ended</p>
+              </div>
+            </div>
+          </div> -->
+          <!-- <div  class="chat_list active_chat">
+                    <div class="chat_people">
+                      <div class="chat_img"> <img src={{userpic}} style="border-radius: 100%" > </div>
+                      <div class="chat_ib" (click)="show($event)">
+                        <h5>incomingRequest.displayName<span class="chat_date">Feb 25</span></h5>
+                        <span class="text-success text-sm-left font-italic">new OliverChatBot request!!</span><button
+                          class="btn float-right btn-outline-info" type="button" (click)="accept()">Accept</button>
+                      </div>
+                    </div>
+                  </div> -->
+        <!-- </div>
+      </div>
+      <div class="mesgs">
+        <div id="chat_window" class="msg_history px-4">
+          <div *ngIf="conversation.length==0" class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <span class="font-italic text-muted no-user-select d-flex justify-content-lg-center">User not
+                  selected</span>
+              </div>
+            </div>
+          </div>
+          <div *ngFor="let msg of conversation">
+            <div *ngIf="msg.type === 'USER'" class="incoming_msg">
+              <div class="incoming_msg_img"> <img src={{userpic}} style="border-radius: 100%" alt="sunil">
+              </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>{{msg.text}}</p>
+                  <span class="time_date"> {{msg.date | date: 'short'}}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="msg.type === 'Agent'" class="outgoing_msg">
+              <div class="sent_msg">
+                <p>{{msg.text}}</p>
+                <span class="time_date">{{msg.date  | date: 'short'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="type_msg">
+          <div class="input_msg_write">
+            <form #addTextInput="ngForm">
+              <input [disabled]="!isSelected" type="text" class="write_msg" #message (keydown.enter)="onSubmit()"
+                (keyup.enter)="message.value = ''" (keyup.escape)="dismiss.emit()" autofocus
+                placeholder="Type a message" name="text" ngModel />
+              <button [disabled]="!isSelected" class="msg_send_btn" type="submit" (click)="onSubmit()"><i
+                  class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 py-4">
+      <div class="info-card-header text-center">
+          <p  *ngIf="email==''">
+              <i>"When i think about great service ,
+                it's about how you take every interaction you have with the
+                customer and use that as a way to improve their perception of your organization"</i></p>
+        <h1>{{name}}</h1>        
+        <p  *ngIf="email!=''" class="title text-muted">
+          <i class="fa fa-envelope"> {{email}}</i>
+          <br />
+          <i class="fa fa-phone">{{phno}}</i>
+          <br />
+          <i class="fa fa-user"> Customer</i>
+        </p>
+      </div>
+      <div class="title-divider">
+        <hr>
+      </div> -->
+      <!-- <div class="info-card-detail px-5">
+                <div class="row">
+                  <div class="col-md">
+                    <h5>Open Orders (2)</h5>
+                    <div class="order-details">
+                      <div class="accordion" id="accordionExample">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                          aria-expanded="true" aria-controls="collapseOne">
+                          Mon Jul 22 2019 11:24:07
+                        </button>
+                        <div id="collapseOne" class="collapse order-details" aria-labelledby="headingOne"
+                          data-parent="#accordionExample">
+                          <span>Order# 113-4571044-6605839</span><br />
+                          <strong>Black Magic Hydroponic Starter Kit</strong>
+                          <br />
+                          <small>Quantity : 1</small><br />
+                          <samp style="color:crimson">$302</samp>
+                        </div>
+                      </div>
+                      <div class="accordion" id="accordionExample">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                          aria-expanded="true" aria-controls="collapseOne">
+                          Fri Apr 15 2019 13:24:07
+                        </button>
+                        <div id="collapseTwo" class="collapse order-details" aria-labelledby="headingOne"
+                          data-parent="#accordionExample">
+                          <span>Order# 113-4571044-6605839</span><br />
+                          <strong>Black Magic Hydroponic Starter Kit</strong>
+                          <br />
+                          <small>Quantity : 1</small><br />
+                          <samp style="color:crimson">$302</samp>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top:10%">
+                  <div class="col-md">
+                    <h5>Previous Orders (1)</h5>
+                    <div class="order-details">
+                      <div class="accordion" id="accordionExample">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree"
+                          aria-expanded="true" aria-controls="collapseOne">
+                          Mon Jul 22 2019 11:24:07
+                        </button>
+                        <div id="collapseThree" class="collapse order-details" aria-labelledby="headingOne"
+                          data-parent="#accordionExample">
+                          <span>Order# 113-4571044-6605839</span><br />
+                          <strong>Black Magic Hydroponic Starter Kit</strong>
+                          <br />
+                          <small>Quantity : 1</small><br />
+                          <samp style="color:crimson">$302</samp>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <p *ngIf="conversation.length!=0">
+                  <i>"When i think about great service ,
+                    it's about how you take every interaction you have with the
+                    customer and use that as a way to improve their perception of your organization"</i></p>               
+            <p  *ngIf="email!=''" class="title text-muted">
+      <button *ngIf="conversation.length!=0" type="button" class="btn end-button btn-outline-danger"
+        [disabled]="list[activeindex].end||list[activeindex].end.status=='dummy'" (click)="end()">End Conversation</button>
+       <span class="icon-separator text-center"><i class="fa fa-star"></i></!
+    </div>
+  </div>
+</div> -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: rgb(12, 12, 12); color: rgb(255, 255, 255);">
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+    <span class="page-title">Agent Escalation Portal</span>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item active">
+      </li>
+    </ul>  
+    <span class="user-info" *ngIf="true">
+        <span style="border-right: 2px solid rgba(247, 244, 244, 0.945); padding-right: 1rem">Hello!
+          <strong>{{user}}</strong></span>
+        <span (click)="logout()" style="padding-left: 1rem; cursor:pointer"><span class="fa fa-fw fa-sign-out"></span>
+          Sign-Out</span>
+      </span>
+  </div>
+</nav>
+<!-- <div class='container-fluid' style="height: 85vh; ">
+  <div class="row" style="height: inherit">
+    <div class='col-md-3' style="">
+      <div class="inbox_people">
+        <div class="headind_srch">
+          <div class="recent_heading">
+            <h4>Request List</h4>
+          </div>
+          <div class="srch_bar">
+            <div class="stylish-input-group">
+              <input type="text" class="search-bar" [(ngModel)]="searchitem" name="searchitem" placeholder="Search">
+              <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+              </span> </div>
+          </div>
+        </div>
+        <div class="inbox_chat">
+          <div class="font-italic text-muted no-user-select d-flex justify-content-lg-center" *ngIf="list.length==0">No
+            requests</div>
+          <div *ngFor="let user of list  | filter:searchitem ;let i = index" class="chat_list">
+            <div *ngIf="user.status=='Requested' " class="chat_people active_chat">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt=""> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}</h5>
+                <span class="text-success text-sm-left font-italic">new Customer Service Chat Bot
+                  request!!</span><button class="btn float-right btn-outline-info" type="button"
+                  (click)="chatactive(user.id,i)">Accept</button>
+              </div>
+            </div>
+            <div *ngIf="user.status=='Accepted'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}
+                </h5>
+                <p>{{user.status}}</p>
+              </div>
+            </div>
+            <div *ngIf="user.status=='Ended'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}
+                </h5>
+                <p>{{user.status}}</p>
+              </div>
+            </div>
+            <div *ngIf="user.status=='dummy'" (click)="chatactive(user.id,i)" class="chat_people">
+              <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+              <div class="chat_ib">
+                <h5>{{user.name}}</h5>
+                <p>Ended</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='hr-divider '>
+        <hr>
+      </div>
+    <div class='col-md-6' style="height: inherit">
+      <div id="chat_window" class="msg_history px-4">
+        <div *ngIf="conversation.length==0" class="">
+          <div class="row">
+            <div class="col-md-12">
+              <span class="font-italic text-muted no-user-select d-flex justify-content-lg-center">User not
+                selected</span>
+            </div>
+          </div>
+        </div>
+        <div *ngFor="let msg of conversation">
+          <div *ngIf="msg.type === 'USER'" class="incoming_msg">
+            <div class="incoming_msg_img"> <img src={{userpic}} style="border-radius: 100%" alt="sunil">
+            </div>
+            <div class="received_msg">
+              <div class="received_withd_msg">
+                <p>{{msg.text}}</p>
+                <span class="time_date"> {{msg.date | date: 'short'}}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="msg.type === 'Agent'" class="outgoing_msg">
+            <div class="sent_msg">
+              <p>{{msg.text}}</p>
+              <span class="time_date">{{msg.date  | date: 'short'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="type_msg">
+        <div class="input_msg_write">
+          <form #addTextInput="ngForm">
+            <input [disabled]="!isSelected" type="text" class="write_msg" #message (keydown.enter)="onSubmit()"
+              (keyup.enter)="message.value = ''" (keyup.escape)="dismiss.emit()" autofocus placeholder="Type a message"
+              name="text" ngModel />
+            <button [disabled]="!isSelected" class="msg_send_btn" type="submit" (click)="onSubmit()"><i
+                class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class='hr-divider '>
+        <hr>
+      </div>
+    <div class='col-md-3' style="height: 90vh">
+      <div class="info-card-header text-center">
+
+        <h1>{{name}}</h1>
+        <p *ngIf="email!=''" class="title text-muted">
+          <i class="fa fa-envelope"> {{email}}</i>
+          <br />
+          <i class="fa fa-phone">{{phno}}</i>
+          <br />
+          <i class="fa fa-user"> Customer</i>
+        </p>
+      </div>
+      <div class='title-divider '>
+        <hr>
+      </div>
+
+      <p *ngIf="email!=''" class="title text-muted">
+        <button *ngIf="conversation.length!=0" type="button" class="btn end-button btn-outline-danger" [disabled]="list[activeindex].end||list[activeindex].end.status=='dummy'" (click)="end()">End
+          Conversation</button>
+    </div>
+  </div>
+</div>
+ -->
+ <div class="container-fluid" style="font-family: open sans">
+  <div class="row" style="height: 91vh">
+
+    <div class="col-md-9 inbox_msg">
+      <div class="inbox_people">
+        <div class="headind_srch">
+          <div class="recent_heading">
+            <h4>Request List</h4>
+          </div>
+          <div class="srch_bar">
+            <div class="stylish-input-group">
+              <input type="text" class="search-bar" [(ngModel)]="searchitem" name="searchitem" placeholder="Search">
+              <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+              </span> </div>
+          </div>
+        </div>
+        <div class="inbox_chat">
+          <!-- <div *ngIf="newRequest">
+            <div *ngFor="let request of incomingRequest ;let i = index" class="chat_list">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="../assets/user.png"> </div>
+                <div class="chat_ib">
+                  <h5>{{request.name || "unknown"}}</h5>
+                  <span class="text-success text-sm-left">New user request!!</span>
+                  <button class="btn float-right btn-outline-info" type="button"
+                    (click)="connectUser(request,i)">Accept</button>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <div *ngIf="list.length==0" class="font-italic text-muted" style="text-align: center; margin-top:10%">
+            No active requests</div>
+            <div *ngFor="let user of list  | filter:searchitem ;let i = index" class="chat_list">
+              <div *ngIf="user.status=='Requested' " class="chat_people active_chat">
+                <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt=""> </div>
+                <div class="chat_ib">
+                  <h5>{{user.name}}</h5>
+                  <span class="text-success text-sm-left font-italic">new Customer Service Chat Bot
+                    request!!</span><button class="btn float-right btn-outline-info" type="button"
+                    (click)="chatactive(user.id,i)">Accept</button>
+                </div>
+              </div>
+              <div *ngIf="user.status=='Accepted'" (click)="chatactive(user.id,i)" class="chat_people">
+                <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+                <div class="chat_ib">
+                  <h5>{{user.name}}
+                  </h5>
+                  <p>{{user.status}}</p>
+                </div>
+              </div>
+              <div *ngIf="user.status=='Ended'" (click)="chatactive(user.id,i)" class="chat_people">
+                <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+                <div class="chat_ib">
+                  <h5>{{user.name}}
+                  </h5>
+                  <p>{{user.status}}</p>
+                </div>
+              </div>
+              <div *ngIf="user.status=='dummy'" (click)="chatactive(user.id,i)" class="chat_people">
+                <div class="chat_img"> <img src={{user.pic}} style="border-radius: 100%" alt="{{name}}"> </div>
+                <div class="chat_ib">
+                  <h5>{{user.name}}</h5>
+                  <p>Ended</p>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div *ngIf="list.length!=0" class="mesgs">
+        <div id="chat_window" class="msg_history px-4">
+          <div *ngIf="!isSelected" class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <span class="font-italic text-muted no-user-select d-flex justify-content-lg-center">User not
+                  selected</span>
+              </div>
+            </div>
+          </div>
+          <div *ngFor="let msg of conversation">
+            <div *ngIf="msg.type === 'USER'" class="incoming_msg">
+              <div class="incoming_msg_img"> <img src={{userpic}} style="border-radius: 100%" alt="sunil">
+              </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>{{msg.text}}</p>
+                  <span class="time_date"> {{msg.date | date: 'short'}}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="msg.type === 'Agent'" class="outgoing_msg">
+              <div class="sent_msg">
+                <p>{{msg.text}}</p>
+                <span class="time_date">{{msg.date  | date: 'short'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isDisconnect" class="badge badge-pill badge-warning">
+          User ended the conversation!!
+        </div>
+        <div class="type_msg">
+            <div class="input_msg_write">
+              <form #addTextInput="ngForm">
+                <input [disabled]="!isSelected" type="text" class="write_msg" #message (keydown.enter)="onSubmit()"
+                  (keyup.enter)="message.value = ''" (keyup.escape)="dismiss.emit()" autofocus placeholder="Type a message"
+                  name="text" ngModel />
+                <button [disabled]="!isSelected" class="msg_send_btn" type="submit" (click)="onSubmit()"><i
+                    class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+              </form>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div *ngIf="isSelected" class="col-md-3 py-2" style="height: 100%">
+      <div class="info-card-header text-center">
+        <h1>{{name}}</h1>
+        <p *ngIf="email!=''" class="title text-muted">
+            <i class="fa fa-envelope"> {{email}}</i>
+            <br />
+            <i class="fa fa-phone">{{phno}}</i>
+            <br />
+            <i class="fa fa-user"> Customer</i>
+          </p>
+      </div>
+      <div class="title-divider">
+        <hr>
+      </div>
+      <div class="info-card-detail px-5">
+        <div class="row">
+          <div class="col-md">
+            <!-- <h1>Articles</h1> -->
+            <!-- <div class="order-details">
+              <div class="accordion" id="accordionExample">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                  aria-expanded="true" aria-controls="collapseOne">
+                  KB0012731 - One or More Printers Missing From Picklist
+                </button>
+                <div id="collapseOne" class="collapse order-details" aria-labelledby="headingOne"
+                  data-parent="#accordionExample">
+                  <strong>Issue</strong>
+                  <ul>
+                    <li>Printers missing from picklist</li>
+                    <li>Some, one, or all printers missing in Printers/Faxes</li>
+                  </ul>
+                  <strong>Environment</strong>
+                  <ul>
+                    <p>Individual PCs, Windows 7, Windows 10, HP CP3505, DELL-OPTIPLEX 7010, DELL-OPTIPLEX 9020,
+                      DELL-OPTIPLEX 7440 AIO PC, DELL-OPTIPLEX 9030 AIO PC, DELL-GX780, COMPAQ-DC5750, HEWLETT
+                      PACKARD-8100 ELITE,</p>
+                  </ul>
+                  <strong>Resolution</strong>
+                  <ol>
+                    <li>Power down the PC and leave off for 2 minutes.</li>
+                    <li>Power the PC back on.</li>
+                    <li>If it has been more than an hour after the reboot and the printer is still missing, Contact the
+                      TSC for further assistance.</li>
+                  </ol>
+                </div>
+              </div>
+              <div class="accordion" id="accordionExample">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                  aria-expanded="true" aria-controls="collapseOne">
+                  KB0075748 - Order Fullfillment Hip Printer Setup
+                </button>
+                <div id="collapseTwo" class="collapse order-details" aria-labelledby="headingOne"
+                  data-parent="#accordionExample">
+                  <strong>Issue</strong>
+                  <ul>
+                    <li>How to set up a Hip Mobile Printer in Order Fulfillment.</li>
+                    <li>Setup a bluetooth and wireless printer with a First Phone.</li>
+                  </ul>
+                  <strong>Environment</strong>
+                  <ul>
+                    <p>Store, Zebra ZQ510 Bluetooth Printer, TC70 First Phone, Order Fulfillment</p>
+                  </ul>
+                  <strong>Resolution</strong>
+                  <ol>
+                    <li>Turn the Hip printer on.</li>
+                  </ol>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <!-- <div class="row" style="margin-top:10%">
+          <div class="col-md">
+            <h5>Previous Orders (1)</h5>
+            <div class="order-details">
+              <div class="accordion" id="accordionExample">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree"
+                  aria-expanded="true" aria-controls="collapseOne">
+                  Mon Jul 22 2019 11:24:07
+                </button>
+                <div id="collapseThree" class="collapse order-details" aria-labelledby="headingOne"
+                  data-parent="#accordionExample">
+                  <span>Order# 113-4571044-6605839</span><br />
+                  <strong>Black Magic Hydroponic Starter Kit</strong>
+                  <br />
+                  <small>Quantity : 1</small><br />
+                  <samp style="color:crimson">$302</samp>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <p *ngIf="email!=''" class="title text-muted">
+          <button *ngIf="conversation.length!=0" type="button" class="btn end-button btn-outline-danger" [disabled]="list[activeindex].end||list[activeindex].end.status=='dummy'" (click)="end()">End
+            Conversation</button>
+            </p>
+      <!-- <span class="icon-separator text-center"><i class="fa fa-star"></i></!-->
+    </div>
+   
+  </div>
+</div>
+<div style="background-color: black;height: 0.1vh;place-content: center center"></div>
